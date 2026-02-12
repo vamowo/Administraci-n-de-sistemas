@@ -21,12 +21,12 @@ while true; do
                 echo "El servicio DHCP ya está instalado."
                 read -p "¿Desea reinstalar o seguir a la configuración? (r/c): " ACCION
                 if [ "$ACCION" == "r" ]; then
-                    dnf reinstall -y dhcp-server
+                    dnf reinstall -y dhcp-server &> /dev/null
                     REINSTALAR="s"
                 fi
             else
                 echo "Instalando DHCP Server..."
-                dnf install -y dhcp-server
+                dnf install -y dhcp-server &> /dev/null
                 REINSTALAR="s"
             fi
 
