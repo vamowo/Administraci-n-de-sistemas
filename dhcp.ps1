@@ -1,3 +1,4 @@
+. .\validarip.ps1
 function Mostrar-Menu {
     Write-Host " "
     Write-Host "--- MENU DE ADMINISTRACION DHCP ---" -ForegroundColor Cyan
@@ -59,4 +60,5 @@ while ($true) {
     else { Write-Host "Opcion invalida" }
 
     Read-Host "Presione Enter para continuar"
+
 }
