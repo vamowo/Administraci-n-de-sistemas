@@ -1,8 +1,6 @@
 #!/bin/bash
 source validarip.sh
 verificar_ip_fija() {
-    # Detectamos la interfaz activa (Red 2) ahora que NAT está apagado
-    # Filtramos la primera que aparezca conectada
     INTERFACE=$(nmcli -t -f DEVICE,STATE device | grep ":conectado" | cut -d: -f1 | head -n 1)
 
     if [ -z "$INTERFACE" ]; then
@@ -35,11 +33,11 @@ instalar_bind() {
         read -p "¿Desea reinstalar o pasar a la configuración? (r/c): " ACCION
         if [ "$ACCION" == "r" ]; then
             echo "Reinstalando BIND9..."
-            dnf reinstall -y bind bind-utils &> /dev/null # Silenciamos logs
+            dnf reinstall -y bind bind-utils &> /dev/null 
         fi
     else
         echo "Instalando BIND9 y utilerías..."
-       dnf install -y bind bind-utils &> /dev/null # Silenciamos logs
+       dnf install -y bind bind-utils &> /dev/null 
     fi
     sed -i 's/listen-on port 53 { 127.0.0.1; };/listen-on port 53 { any; };/' /etc/named.conf
     sed -i 's/allow-query     { localhost; };/allow-query     { any; };/' /etc/named.conf
@@ -51,7 +49,7 @@ crear_dominio() {
     read -p "Ingrese el dominio: " DOMINIO
     read -p "Ingrese la IP a la que resolvera: " IP_CLIENTE
 
-    # 1. Agregar a named.rfc1912.zones
+    # Agregar a named.rfc1912.zones
     if grep -q "$DOMINIO" /etc/named.rfc1912.zones; then
         echo "El dominio $DOMINIO ya existe."
         return
@@ -67,7 +65,6 @@ EOF
 
     # 2. Crear archivo de zona
     FILE="/var/named/$DOMINIO.zone"
-    # Tomamos la IP actual de la interfaz para el registro NS
     IP_NS=$(hostname -I | awk '{print $1}')
 
     cat <<EOF > $FILE
