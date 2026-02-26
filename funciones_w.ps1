@@ -54,7 +54,6 @@ function Listar-Dominios {
 #---FUNCIONES DHCP----
 
 function Obtener-Configuracion {
-    # Esta función agrupa toda la entrada de datos
     $config = @{}
     $config.scopeName = Read-Host "Nombre del Ambito"
     $config.ipIni = Read-Host "IP Inicial"
@@ -106,4 +105,5 @@ function Ejecutar-Configuracion {
     
     Restart-Service DHCPServer
     Write-Host "Configuracion completada."
+
 }
