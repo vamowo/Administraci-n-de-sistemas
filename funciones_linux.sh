@@ -49,8 +49,6 @@ pedir_ip() {
 configurar_dhcp() {
     echo "--- INICIO DE CONFIGURACIÓN ---"
     read -p "Nombre descriptivo del Ámbito (Scope): " SCOPE_NAME
-    
-    # Llamadas a la función de validación
     IP_INI=$(pedir_ip "Introduce la IP Inicial del rango: ")
     IP_FIN=$(pedir_ip "Introduce la IP Final del rango (debe ser mayor a $IP_INI): " "$IP_INI")
     
@@ -64,12 +62,9 @@ configurar_dhcp() {
         echo "Error: Debe ingresar un número mayor o igual a 30."
     done
 
-    # Preparación de variables de red
     RED_BASE=$(echo $IP_INI | cut -d. -f1-3)
     PRIMER_OCTETO=$(echo $IP_INI | cut -d. -f4)
     IP_INICIO_CLIENTES=$((PRIMER_OCTETO + 1))
-
-    # Configuración de red (nmcli)
     echo "Configurando Servidor con IP: $IP_INI"
     nmcli con mod "Conexión cableada 1" ipv4.addresses "$IP_INI/24" ipv4.method manual
     nmcli con up "Conexión cableada 1"
@@ -77,8 +72,6 @@ configurar_dhcp() {
     # Creación del archivo dhcpd.conf
     {
         echo "option domain-name \"$SCOPE_NAME\";"
-        
-        # Concatenación inteligente de DNS
         DNS_STR=""
         [ -n "$DNS1" ] && DNS_STR="$DNS1"
         [ -n "$DNS2" ] && DNS_STR="${DNS_STR:+$DNS_STR, }$DNS2"
@@ -92,8 +85,6 @@ configurar_dhcp() {
         [ -n "$GW_OPT" ] && echo "  option routers $GW_OPT;"
         echo "}"
     } > /etc/dhcp/dhcpd.conf
-
-    # Aplicar cambios y monitorear
     if dhcpd -t &> /dev/null; then
         systemctl restart dhcpd
         systemctl enable dhcpd
@@ -219,3 +210,4 @@ eliminar_dominio() {
     systemctl restart named
     echo "Dominio $DOMINIO eliminado."
 }
+
